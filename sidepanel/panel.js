@@ -183,6 +183,7 @@ async function handleSend() {
 
 function parseMessage(message) {
   // Check for /cross command first: /cross @targets <- @sources message
+  // Use this for complex cases (3 AIs, or when you want to be explicit)
   const crossCommandPattern = /^\/cross\s+(.+?)\s*<-\s*(.+?)\s+(.+)$/is;
   const crossMatch = message.match(crossCommandPattern);
 
@@ -204,20 +205,38 @@ function parseMessage(message) {
         crossRef: true,
         mentions: [...targetAIs, ...sourceAIs],
         targetAIs,
-        sourceAIs,  // Now supports multiple sources
-        originalMessage: actualMessage  // Just the message part, not the command
+        sourceAIs,
+        originalMessage: actualMessage
       };
     }
   }
 
-  // Fallback: Pattern-based detection for @ mentions
+  // Pattern-based detection for @ mentions
   const mentionPattern = /@(claude|chatgpt|gemini)/gi;
   const matches = [...message.matchAll(mentionPattern)];
-
-  // Get unique mentions (lowercase)
   const mentions = [...new Set(matches.map(m => m[1].toLowerCase()))];
 
-  // Single mention or multiple = just send to mentioned AIs (no cross-reference)
+  // For exactly 2 AIs: use keyword detection (simpler syntax)
+  // Last mentioned = source (being evaluated), first = target (doing evaluation)
+  if (mentions.length === 2) {
+    const evalKeywords = /评价|看看|怎么样|怎么看|如何|讲的|说的|回答|赞同|同意|分析|认为|观点|看法|意见|evaluate|think of|opinion|review|agree|analysis/i;
+
+    if (evalKeywords.test(message)) {
+      const sourceAI = matches[matches.length - 1][1].toLowerCase();
+      const targetAI = matches[0][1].toLowerCase();
+
+      return {
+        crossRef: true,
+        mentions,
+        targetAIs: [targetAI],
+        sourceAIs: [sourceAI],
+        originalMessage: message
+      };
+    }
+  }
+
+  // For 3+ AIs without /cross command: just send to all (no cross-reference)
+  // User should use /cross command for complex 3-AI scenarios
   return {
     crossRef: false,
     mentions,

@@ -61,10 +61,14 @@
     <section class="help">
       <details>
         <summary>Cross-reference syntax</summary>
-        <p class="syntax-title">/cross @目标 <- @来源 消息</p>
+        <p class="help-subtitle">两个 AI（自动检测）</p>
         <ul>
-          <li><code>/cross @Claude @Gemini <- @ChatGPT 评价一下</code><br><small>Claude 和 Gemini 评价 ChatGPT</small></li>
-          <li><code>/cross @Claude <- @ChatGPT @Gemini 对比一下</code><br><small>Claude 对比 ChatGPT 和 Gemini</small></li>
+          <li><code>@Claude 评价一下 @ChatGPT</code><br><small>Claude 评价 ChatGPT（最后@的是来源）</small></li>
+        </ul>
+        <p class="help-subtitle">三个 AI（用 /cross 命令）</p>
+        <ul>
+          <li><code>/cross @Claude @Gemini <- @ChatGPT 评价</code><br><small>两个评价一个</small></li>
+          <li><code>/cross @Claude <- @ChatGPT @Gemini 对比</code><br><small>一个对比两个</small></li>
         </ul>
       </details>
     </section>
