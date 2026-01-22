@@ -6,7 +6,7 @@ const AI_URL_PATTERNS = {
   chatgpt: ['chat.openai.com', 'chatgpt.com'],
   gemini: ['gemini.google.com'],
   deepseek: ['chat.deepseek.com'],
-  kimi: ['kimi.moonshot.cn'],
+  kimi: ['kimi.moonshot.cn', 'www.kimi.com'],
   chatglm: ['chatglm.cn'],
   qwen: ['tongyi.aliyun.com']
 };

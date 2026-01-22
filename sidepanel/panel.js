@@ -156,7 +156,7 @@ function getAITypeFromUrl(url) {
   if (url.includes('chat.openai.com') || url.includes('chatgpt.com')) return 'chatgpt';
   if (url.includes('gemini.google.com')) return 'gemini';
   if (url.includes('chat.deepseek.com')) return 'deepseek';
-  if (url.includes('kimi.moonshot.cn')) return 'kimi';
+  if (url.includes('kimi.moonshot.cn') || url.includes('kimi.com')) return 'kimi';
   if (url.includes('chatglm.cn')) return 'chatglm';
   if (url.includes('tongyi.aliyun.com')) return 'qwen';
   return null;
