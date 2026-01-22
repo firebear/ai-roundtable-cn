@@ -10,7 +10,7 @@ const AI_URLS = {
   deepseek: 'https://chat.deepseek.com',
   kimi: 'https://kimi.moonshot.cn',
   chatglm: 'https://chatglm.cn',
-  qwen: 'https://tongyi.aliyun.com'
+  qwen: 'https://www.qianwen.com'
 };
 
 // Cross-reference action keywords (inserted into message)
@@ -183,7 +183,7 @@ function getAITypeFromUrl(url) {
   if (url.includes('chat.deepseek.com')) return 'deepseek';
   if (url.includes('kimi.moonshot.cn') || url.includes('kimi.com')) return 'kimi';
   if (url.includes('chatglm.cn')) return 'chatglm';
-  if (url.includes('tongyi.aliyun.com') || url.includes('qianwen.com')) return 'qwen';
+  if (url.includes('qianwen.com')) return 'qwen';
   return null;
 }
 

@@ -156,7 +156,7 @@ I'm currently most satisfied with, and calibrated to, the **web chat experience*
    - [DeepSeek](https://chat.deepseek.com)
    - [Kimi](https://kimi.moonshot.cn)
    - [ChatGLM](https://chatglm.cn)
-   - [通义千问](https://tongyi.aliyun.com)
+   - [通义千问](https://www.qianwen.com)
 
 2. 推荐使用 Chrome 的 Split Tab 功能，将 2-7 个 AI 页面并排显示
 
