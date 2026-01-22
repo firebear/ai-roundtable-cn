@@ -38,6 +38,9 @@ const connectedTabs = {
   qwen: null
 };
 
+// Track which tab is connected to which AI (tabId -> aiType)
+const tabToAiMap = new Map();
+
 // Discussion Mode State
 let discussionState = {
   active: false,
@@ -905,9 +908,20 @@ function setupTabListener() {
     // Only care when page is fully loaded
     if (changeInfo.status === 'complete' && tab.url) {
       const aiType = getAITypeFromUrl(tab.url);
+
+      // Check if this tab was previously connected to a different AI
+      const previousAiType = tabToAiMap.get(tabId);
+
+      if (previousAiType && previousAiType !== aiType) {
+        // Tab navigated from one AI to another, clear old connection
+        updateTabStatus(previousAiType, false);
+        log(`${capitalize(previousAiType)} 连接已断开（标签页导航）`, 'info');
+      }
+
       if (aiType) {
-        // Update connection status
+        // Update connection status and tab mapping
         updateTabStatus(aiType, true);
+        tabToAiMap.set(tabId, aiType);
         log(`${capitalize(aiType)} 已连接`, 'success');
 
         // Hide user hint when at least one AI is connected
@@ -924,6 +938,7 @@ function setupTabListener() {
         const aiType = getAITypeFromUrl(tab.url);
         if (aiType) {
           updateTabStatus(aiType, true);
+          tabToAiMap.set(activeInfo.tabId, aiType);
           checkUserHint();
         }
       }
@@ -934,8 +949,24 @@ function setupTabListener() {
 
   // Listen for tab removal (tab closed) - update connection status
   chrome.tabs.onRemoved.addListener(async (tabId) => {
-    // Check all AI types to see if any of them lost their last connection
-    await checkAllAIConnections();
+    // Check if this tab was connected to an AI
+    const aiType = tabToAiMap.get(tabId);
+    if (aiType) {
+      // Remove from mapping
+      tabToAiMap.delete(tabId);
+
+      // Check if this AI has any other connected tabs
+      const stillConnected = Array.from(tabToAiMap.values()).includes(aiType);
+
+      if (!stillConnected) {
+        // No other tabs for this AI, update status to disconnected
+        updateTabStatus(aiType, false);
+        log(`${capitalize(aiType)} 连接已断开（标签页已关闭）`, 'info');
+      }
+    }
+
+    // Update user hint visibility
+    checkUserHint();
   });
 }
 
@@ -962,46 +993,9 @@ function updateTabStatus(aiType, connected) {
 
 function checkUserHint() {
   // Hide hint if at least one AI is connected
-  const hasConnected = Object.values(connectedTabs).some(v => v);
+  const hasConnected = tabToAiMap.size > 0;
   const hintEl = document.getElementById('user-hint');
   if (hintEl) {
     hintEl.style.display = hasConnected ? 'none' : 'block';
-  }
-}
-
-async function checkAllAIConnections() {
-  try {
-    // Get all open tabs
-    const tabs = await chrome.tabs.query({});
-
-    // Track which AI types are still connected
-    const stillConnected = {};
-
-    for (const tab of tabs) {
-      if (tab.url) {
-        const aiType = getAITypeFromUrl(tab.url);
-        if (aiType) {
-          stillConnected[aiType] = true;
-        }
-      }
-    }
-
-    // Update connection status for each AI type
-    for (const aiType of AI_TYPES) {
-      const wasConnected = connectedTabs[aiType];
-      const isConnected = stillConnected[aiType];
-
-      // If it was connected but now isn't, update status
-      if (wasConnected && !isConnected) {
-        updateTabStatus(aiType, false);
-        log(`${capitalize(aiType)} 连接已断开`, 'info');
-      }
-    }
-
-    // Update user hint visibility
-    checkUserHint();
-
-  } catch (err) {
-    log('检查连接状态时出错: ' + err.message, 'error');
   }
 }
