@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "AI 圆桌 中国版 - Multi-AI Roundtable CN",
-  "version": "0.3.0",
-  "description": "让多个 AI 助手围桌讨论，交叉评价，深度协作 - 中国版支持DeepSeek等国产大模型",
+  "version": "0.4.0",
+  "description": "让多个 AI 助手围桌讨论，交叉评价，深度协作 - 中国版支持DeepSeek、Kimi、ChatGLM、通义千问等国产大模型",
 
   "permissions": [
     "sidePanel",
@@ -17,7 +17,10 @@
     "https://chat.openai.com/*",
     "https://chatgpt.com/*",
     "https://gemini.google.com/*",
-    "https://chat.deepseek.com/*"
+    "https://chat.deepseek.com/*",
+    "https://kimi.moonshot.cn/*",
+    "https://chatglm.cn/*",
+    "https://tongyi.aliyun.com/*"
   ],
 
   "side_panel": {
@@ -47,6 +50,21 @@
     {
       "matches": ["https://chat.deepseek.com/*"],
       "js": ["content/deepseek.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://kimi.moonshot.cn/*"],
+      "js": ["content/kimi.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://chatglm.cn/*"],
+      "js": ["content/chatglm.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://tongyi.aliyun.com/*"],
+      "js": ["content/qwen.js"],
       "run_at": "document_idle"
     }
   ],

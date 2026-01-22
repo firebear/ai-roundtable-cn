@@ -1,14 +1,14 @@
 # AI 圆桌 中国版 (AI Roundtable CN)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-0.3.0-brightgreen.svg)](https://github.com/firebear/ai-roundtable-cn)
+[![Version](https://img.shields.io/badge/Version-0.4.0-brightgreen.svg)](https://github.com/firebear/ai-roundtable-cn)
 [![Status: Stable](https://img.shields.io/badge/Status-Stable-success.svg)](#-稳定版本)
 
-> 让多个 AI 助手围桌讨论，交叉评价，深度协作 - 支持国产大模型
+> 让多个 AI 助手围桌讨论，交叉评价，深度协作 - 支持7个主流AI平台
 
-一个 Chrome 扩展，让你像"会议主持人"一样，同时操控多个 AI（Claude、ChatGPT、Gemini、DeepSeek），实现真正的 AI 圆桌会议。
+一个 Chrome 扩展，让你像"会议主持人"一样，同时操控多个 AI（Claude、ChatGPT、Gemini、DeepSeek、Kimi、ChatGLM、通义千问），实现真正的 AI 圆桌会议。
 
-**中国版特色**：新增对DeepSeek等国产大模型的支持，让AI圆桌更适合中国用户。
+**中国版特色**：完整支持4个国产大模型（DeepSeek、Kimi、ChatGLM、通义千问），让AI圆桌更适合中国用户。
 
 <!-- TODO: 添加 GIF 演示 -->
 <!-- ![Demo GIF](assets/demo.gif) -->
@@ -93,10 +93,16 @@ I'm currently most satisfied with, and calibrated to, the **web chat experience*
 
 ## 支持平台
 
+**国际AI**:
 - ✅ **Claude** - 完全自动化支持
 - ✅ **ChatGPT** - 完全自动化支持
 - ✅ **Gemini** - 完全自动化支持
+
+**国产AI**:
 - ✅ **DeepSeek** - 自动填入+响应捕获，需手动点击发送
+- ✅ **Kimi** - 自动填入+响应捕获，发送功能待测试
+- ✅ **ChatGLM** - 自动填入+响应捕获，发送功能待测试
+- ✅ **通义千问** - 自动填入+响应捕获，发送功能待测试
 
 ---
 
@@ -140,12 +146,19 @@ I'm currently most satisfied with, and calibrated to, the **web chat experience*
 ### 准备工作
 
 1. 打开 Chrome，登录以下 AI 平台（根据需要）：
+
+   **国际AI**:
    - [Claude](https://claude.ai)
    - [ChatGPT](https://chatgpt.com)
    - [Gemini](https://gemini.google.com)
-   - [DeepSeek](https://chat.deepseek.com) 🆕 中国版新增
 
-2. 推荐使用 Chrome 的 Split Tab 功能，将 2-4 个 AI 页面并排显示
+   **国产AI** 🆕:
+   - [DeepSeek](https://chat.deepseek.com)
+   - [Kimi](https://kimi.moonshot.cn)
+   - [ChatGLM](https://chatglm.cn)
+   - [通义千问](https://tongyi.aliyun.com)
+
+2. 推荐使用 Chrome 的 Split Tab 功能，将 2-7 个 AI 页面并排显示
 
 3. 点击扩展图标，打开侧边栏控制台
 
@@ -156,14 +169,14 @@ I'm currently most satisfied with, and calibrated to, the **web chat experience*
 ### 普通模式
 
 **基本发送**
-1. 勾选要发送的目标 AI（Claude / ChatGPT / Gemini / DeepSeek）
+1. 勾选要发送的目标 AI（Claude / ChatGPT / Gemini / DeepSeek / Kimi / ChatGLM / 通义千问）
 2. 输入消息
 3. 按 Enter 或点击「发送」按钮
-   - **DeepSeek用户注意**：插件会自动填入消息并高亮发送按钮3秒，请手动点击发送按钮
+   - **国产AI用户注意**：插件会自动填入消息，部分平台可能需要手动点击发送按钮
 
 **@ 提及语法**
 - 点击 @ 按钮快速插入 AI 名称
-- 或手动输入：`@Claude 你怎么看这个问题？`或`@DeepSeek 分析一下`
+- 或手动输入：`@Claude 你怎么看这个问题？`、`@DeepSeek 分析一下`、`@Kimi 你的观点呢？`
 
 **互评（推荐）**
 
@@ -231,8 +244,11 @@ ai-roundtable-cn/
 │   ├── claude.js          # Claude 页面注入脚本
 │   ├── chatgpt.js         # ChatGPT 页面注入脚本
 │   ├── gemini.js          # Gemini 页面注入脚本
-│   └── deepseek.js        # DeepSeek 页面注入脚本 🆕 中国版新增
-├── 版本日志.md             # 版本更新记录 🆕
+│   ├── deepseek.js        # DeepSeek 页面注入脚本
+│   ├── kimi.js            # Kimi 页面注入脚本 🆕
+│   ├── chatglm.js         # ChatGLM 页面注入脚本 🆕
+│   └── qwen.js            # 通义千问页面注入脚本 🆕
+├── 版本日志.md             # 版本更新记录
 └── icons/                  # 扩展图标
 ```
 
