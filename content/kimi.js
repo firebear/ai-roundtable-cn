@@ -73,17 +73,16 @@
     isSending = true;
 
     try {
-      // Kimi uses textarea for input
+      // Kimi uses contenteditable div for input
       const inputSelectors = [
+        'div.chat-input-editor[contenteditable="true"]',  // Kimi specific
+        'div[contenteditable="true"][data-lexical-editor="true"]',  // Lexical editor
+        'div[role="textbox"][contenteditable="true"]',  // Generic textbox
+        'div[contenteditable="true"].chat-input-editor',  // Alternative format
         'textarea[placeholder*="输入"]',
         'textarea[placeholder*="message"]',
-        'textarea[placeholder*="Message"]',
         'textarea[placeholder*="问Kimi"]',
-        'textarea[placeholder*="和Kimi"]',
-        'textarea[class*="input"]',
-        'textarea[class*="textarea"]',
-        'div[contenteditable="true"]',
-        'textarea'
+        'div[contenteditable="true"]'
       ];
 
       let inputEl = null;
