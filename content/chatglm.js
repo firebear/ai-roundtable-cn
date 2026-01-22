@@ -275,6 +275,10 @@
   function findSendButton() {
     // ChatGLM send button selectors
     const selectors = [
+      'div.enter-icon-container:not(.empty) img.enter_icon',  // ChatGLM specific - enabled
+      'div.enter-icon-container img.enter_icon',  // ChatGLM specific - any state
+      'div[class*="enter-icon"] img[src*="send"]',  // Partial class match
+      'div.enter-icon-container',  // Container itself
       'button[aria-label="Send"]',
       'button[aria-label="send"]',
       'button[aria-label="发送"]',
@@ -293,12 +297,20 @@
       console.log(`[AI Panel] ChatGLM: Testing selector "${selector}":`, btn ? 'Found' : 'Not found');
       if (btn && isVisible(btn)) {
         console.log('[AI Panel] ChatGLM: Found send button with selector:', selector);
+        // If it's the img element, return its container
+        if (btn.tagName === 'IMG') {
+          const container = btn.closest('.enter-icon-container');
+          if (container) {
+            console.log('[AI Panel] ChatGLM: Using container instead of img');
+            return container;
+          }
+        }
         return btn;
       }
     }
 
     // Fallback: try to find any button that looks like a send button
-    const buttons = Array.from(document.querySelectorAll('button, div[role="button"], svg[class*="send"]'));
+    const buttons = Array.from(document.querySelectorAll('button, div[class*="icon"], img[src*="send"]'));
 
     console.log(`[AI Panel] ChatGLM: Found ${buttons.length} potential button elements`);
 
@@ -309,11 +321,16 @@
       console.log('[AI Panel] ChatGLM: Checking button - text:', text, 'class:', className);
 
       if (text.includes('send') || text.includes('发送') ||
-          text.includes('提交') || text === '' ||
-          className.includes('send') || className.includes('submit') ||
-          className.includes('icon') || className.includes('button')) {
+          text.includes('提交') || text === '新对话' ||
+          className.includes('enter-icon') || className.includes('send') ||
+          className.includes('submit') || (btn.tagName === 'IMG' && btn.src?.includes('send'))) {
         if (isVisible(btn)) {
           console.log('[AI Panel] ChatGLM: Found potential send button:', className);
+          // If it's img, return container
+          if (btn.tagName === 'IMG') {
+            const container = btn.closest('.enter-icon-container');
+            if (container) return container;
+          }
           return btn;
         }
       }
