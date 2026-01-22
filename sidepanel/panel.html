@@ -21,41 +21,46 @@
 
     <!-- Normal Mode Content -->
     <div id="normal-mode">
+      <!-- New user hint -->
+      <div class="user-hint" id="user-hint">
+        💡 <strong>首次使用？</strong>点击下方的"连接"按钮打开AI平台
+      </div>
+
       <section class="targets">
       <label class="target-label">
         <input type="checkbox" id="target-deepseek" checked>
         <span class="target-name deepseek">DeepSeek</span>
-        <span class="status" id="status-deepseek">-</span>
+        <button class="connect-btn" id="connect-deepseek" data-ai="deepseek">🔗 连接</button>
       </label>
       <label class="target-label">
         <input type="checkbox" id="target-kimi" checked>
         <span class="target-name kimi">Kimi</span>
-        <span class="status" id="status-kimi">-</span>
+        <button class="connect-btn" id="connect-kimi" data-ai="kimi">🔗 连接</button>
       </label>
       <label class="target-label">
         <input type="checkbox" id="target-chatglm">
         <span class="target-name chatglm">ChatGLM</span>
-        <span class="status" id="status-chatglm">-</span>
+        <button class="connect-btn" id="connect-chatglm" data-ai="chatglm">🔗 连接</button>
       </label>
       <label class="target-label">
         <input type="checkbox" id="target-qwen">
         <span class="target-name qwen">通义千问</span>
-        <span class="status" id="status-qwen">-</span>
+        <button class="connect-btn" id="connect-qwen" data-ai="qwen">🔗 连接</button>
       </label>
       <label class="target-label">
         <input type="checkbox" id="target-claude">
         <span class="target-name claude">Claude</span>
-        <span class="status" id="status-claude">-</span>
+        <button class="connect-btn" id="connect-claude" data-ai="claude">🔗 连接</button>
       </label>
       <label class="target-label">
         <input type="checkbox" id="target-chatgpt">
         <span class="target-name chatgpt">ChatGPT</span>
-        <span class="status" id="status-chatgpt">-</span>
+        <button class="connect-btn" id="connect-chatgpt" data-ai="chatgpt">🔗 连接</button>
       </label>
       <label class="target-label">
         <input type="checkbox" id="target-gemini">
         <span class="target-name gemini">Gemini</span>
-        <span class="status" id="status-gemini">-</span>
+        <button class="connect-btn" id="connect-gemini" data-ai="gemini">🔗 连接</button>
       </label>
     </section>
 

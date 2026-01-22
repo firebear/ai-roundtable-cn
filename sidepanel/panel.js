@@ -2,6 +2,17 @@
 
 const AI_TYPES = ['claude', 'chatgpt', 'gemini', 'deepseek', 'kimi', 'chatglm', 'qwen'];
 
+// AI Platform URLs
+const AI_URLS = {
+  claude: 'https://claude.ai',
+  chatgpt: 'https://chatgpt.com',
+  gemini: 'https://gemini.google.com',
+  deepseek: 'https://chat.deepseek.com',
+  kimi: 'https://kimi.moonshot.cn',
+  chatglm: 'https://chatglm.cn',
+  qwen: 'https://tongyi.aliyun.com'
+};
+
 // Cross-reference action keywords (inserted into message)
 const CROSS_REF_ACTIONS = {
   evaluate: { prompt: '评价一下' },
@@ -44,6 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
   checkConnectedTabs();
   setupEventListeners();
   setupDiscussionMode();
+  setupConnectButtons();
+  setupTabListener();
 });
 
 function setupEventListeners() {
@@ -829,4 +842,123 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+// ============================================
+// Connection Button Functions
+// ============================================
+
+function setupConnectButtons() {
+  // Add click event listeners to all connect buttons
+  document.querySelectorAll('.connect-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const aiType = btn.dataset.ai;
+      if (!aiType) return;
+
+      // Check if already connected
+      if (btn.classList.contains('connected')) {
+        return;
+      }
+
+      // Set button to connecting state
+      btn.classList.add('connecting');
+      btn.textContent = '⏳ 连接中...';
+
+      try {
+        // Open AI platform in new tab
+        await chrome.tabs.create({
+          url: AI_URLS[aiType],
+          active: false  // Don't switch to the new tab immediately
+        });
+
+        log(`正在打开 ${capitalize(aiType)}...`, 'info');
+
+        // Check connection status after a delay
+        setTimeout(async () => {
+          await checkConnectedTabs();
+
+          // Check if connection was successful
+          const isConnected = connectedTabs[aiType];
+          if (!isConnected) {
+            // Still not connected, reset button
+            btn.classList.remove('connecting');
+            btn.textContent = '🔗 连接';
+            log(`${capitalize(aiType)} 已打开，请登录并在页面加载完成后刷新`, 'info');
+          }
+        }, 3000);
+
+      } catch (err) {
+        log(`无法打开 ${capitalize(aiType)}: ${err.message}`, 'error');
+        btn.classList.remove('connecting');
+        btn.textContent = '🔗 连接';
+      }
+    });
+  });
+}
+
+function setupTabListener() {
+  // Listen for tab updates to automatically detect AI connections
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    // Only care when page is fully loaded
+    if (changeInfo.status === 'complete' && tab.url) {
+      const aiType = getAITypeFromUrl(tab.url);
+      if (aiType) {
+        // Update connection status
+        updateTabStatus(aiType, true);
+        log(`${capitalize(aiType)} 已连接`, 'success');
+
+        // Hide user hint when at least one AI is connected
+        checkUserHint();
+      }
+    }
+  });
+
+  // Also listen for tab activation (user switches tabs)
+  chrome.tabs.onActivated.addListener(async (activeInfo) => {
+    try {
+      const tab = await chrome.tabs.get(activeInfo.tabId);
+      if (tab.url) {
+        const aiType = getAITypeFromUrl(tab.url);
+        if (aiType) {
+          updateTabStatus(aiType, true);
+          checkUserHint();
+        }
+      }
+    } catch (err) {
+      // Tab might be closed, ignore error
+    }
+  });
+}
+
+function updateTabStatus(aiType, connected) {
+  const connectBtn = document.getElementById(`connect-${aiType}`);
+  if (connectBtn) {
+    if (connected) {
+      connectBtn.textContent = '✅ 已连接';
+      connectBtn.classList.remove('connecting');
+      connectBtn.classList.add('connected');
+    } else {
+      connectBtn.textContent = '🔗 连接';
+      connectBtn.classList.remove('connecting', 'connected');
+    }
+  }
+
+  // Store connection state
+  if (connected) {
+    connectedTabs[aiType] = true;
+  } else {
+    delete connectedTabs[aiType];
+  }
+}
+
+function checkUserHint() {
+  // Hide hint if at least one AI is connected
+  const hasConnected = Object.values(connectedTabs).some(v => v);
+  const hintEl = document.getElementById('user-hint');
+  if (hintEl) {
+    hintEl.style.display = hasConnected ? 'none' : 'block';
+  }
 }
