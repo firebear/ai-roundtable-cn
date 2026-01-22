@@ -130,20 +130,25 @@
       // Small delay to let the UI process
       await sleep(300);
 
-      // Find the send button
-      const sendButton = findSendButton();
-      if (sendButton) {
-        // Try to auto-click the send button
-        const clickSuccess = await tryClickSendButton(sendButton);
+      // Try Method 1: Press Enter in input field (most chat apps support this)
+      const enterSuccess = await tryPressEnter(inputEl);
+      if (!enterSuccess) {
+        console.log('[AI Panel] DeepSeek: Enter key failed, trying click methods...');
 
-        if (!clickSuccess) {
-          // Fallback: Highlight the button to indicate user should click it
-          sendButton.style.boxShadow = '0 0 10px 3px rgba(66, 153, 225, 0.6)';
-          sendButton.style.transition = 'box-shadow 0.3s';
+        // Method 2: Find and click the send button
+        const sendButton = findSendButton();
+        if (sendButton) {
+          const clickSuccess = await tryClickSendButton(sendButton);
 
-          setTimeout(() => {
-            sendButton.style.boxShadow = '';
-          }, 3000);
+          if (!clickSuccess) {
+            // Fallback: Highlight the button to indicate user should click it
+            sendButton.style.boxShadow = '0 0 10px 3px rgba(66, 153, 225, 0.6)';
+            sendButton.style.transition = 'box-shadow 0.3s';
+
+            setTimeout(() => {
+              sendButton.style.boxShadow = '';
+            }, 3000);
+          }
         }
       }
 
@@ -203,6 +208,60 @@
     }
 
     return null;
+  }
+
+  async function tryPressEnter(inputElement) {
+    console.log('[AI Panel] DeepSeek: Trying Enter key in input field...');
+
+    try {
+      // Make sure input is focused
+      inputElement.focus();
+      await sleep(50);
+
+      // Method 1: Simple Enter key press
+      const enterEvent = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        code: 'Enter',
+        keyCode: 13,
+        which: 13,
+        bubbles: true,
+        cancelable: true,
+        composed: true
+      });
+
+      inputElement.dispatchEvent(enterEvent);
+      await sleep(50);
+
+      // Keyup
+      inputElement.dispatchEvent(new KeyboardEvent('keyup', {
+        key: 'Enter',
+        code: 'Enter',
+        keyCode: 13,
+        which: 13,
+        bubbles: true,
+        cancelable: true,
+        composed: true
+      }));
+      await sleep(100);
+
+      // Keypress (deprecated but might be needed)
+      inputElement.dispatchEvent(new KeyboardEvent('keypress', {
+        key: 'Enter',
+        code: 'Enter',
+        keyCode: 13,
+        which: 13,
+        bubbles: true,
+        cancelable: true,
+        composed: true
+      }));
+      await sleep(200);
+
+      console.log('[AI Panel] DeepSeek: Enter key pressed in input field');
+      return true;
+    } catch (e) {
+      console.error('[AI Panel] DeepSeek: Enter key error:', e);
+      return false;
+    }
   }
 
   async function tryClickSendButton(button) {
