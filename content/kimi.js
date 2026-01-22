@@ -87,17 +87,11 @@
       ];
 
       let inputEl = null;
-      let foundSelector = null;
-
-      console.log('[AI Panel] Kimi: Searching for input box...');
 
       for (const selector of inputSelectors) {
         const el = document.querySelector(selector);
-        console.log(`[AI Panel] Kimi: Testing selector "${selector}":`, el ? 'Found' : 'Not found');
         if (el && isVisible(el)) {
           inputEl = el;
-          foundSelector = selector;
-          console.log('[AI Panel] Kimi: Input box found with selector:', foundSelector);
           break;
         }
       }
@@ -108,13 +102,11 @@
 
       // Focus the input
       inputEl.focus();
-      console.log('[AI Panel] Kimi: Input focused');
 
       // Handle different input types
       if (inputEl.tagName === 'TEXTAREA') {
         // For textarea, use value setter
         inputEl.value = text;
-        console.log('[AI Panel] Kimi: Text set for textarea');
 
         // Trigger React/Vue change events
         const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
@@ -132,9 +124,6 @@
         inputEl.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true }));
       } else {
         // Contenteditable div - use Clipboard API for Lexical editor
-        console.log('[AI Panel] Kimi: Using Clipboard API for Lexical editor');
-
-        // Focus the input
         inputEl.focus();
 
         // Use Clipboard API to paste text
@@ -146,8 +135,6 @@
                 'text/plain': new Blob([text], { type: 'text/plain' })
               })
             ]);
-
-            console.log('[AI Panel] Kimi: Text copied to clipboard');
 
             // Trigger paste
             await sleep(100);
@@ -164,10 +151,7 @@
 
             // Also try document.execCommand as fallback
             document.execCommand('paste');
-
-            console.log('[AI Panel] Kimi: Paste executed, content:', inputEl.innerHTML);
           } catch (err) {
-            console.error('[AI Panel] Kimi: Clipboard error:', err);
             // Fallback to manual typing simulation
             await simulateTyping(inputEl, text);
           }
@@ -202,17 +186,12 @@
   }
 
   async function clickSendButton(button) {
-    console.log('[AI Panel] Kimi: Attempting to click send button');
-    console.log('[AI Panel] Kimi: Button element:', button.tagName, button.className);
-
     // Try multiple methods to click the button
     try {
       // If it's an SVG element, click its parent container
       if (button.tagName === 'svg' || button.tagName === 'path') {
-        console.log('[AI Panel] Kimi: Found SVG element, clicking parent container');
         const container = button.closest('.send-button-container') || button.parentElement;
         if (container) {
-          console.log('[AI Panel] Kimi: Clicking container:', container.className);
 
           // Method 1: Click container
           container.click();
@@ -256,13 +235,11 @@
             button: 0
           }));
 
-          console.log('[AI Panel] Kimi: Container click methods executed');
           return;
         }
       }
 
       // Standard button click
-      console.log('[AI Panel] Kimi: Trying standard click methods');
 
       // Method 1: Standard click
       button.click();
@@ -305,8 +282,6 @@
       button.dispatchEvent(mouseUp);
       await sleep(50);
       button.dispatchEvent(clickEvent);
-
-      console.log('[AI Panel] Kimi: All click methods executed');
     } catch (err) {
       console.error('[AI Panel] Kimi: Click error:', err);
       // Highlight button if click fails
@@ -339,7 +314,6 @@
     for (const selector of selectors) {
       const btn = document.querySelector(selector);
       if (btn && isVisible(btn)) {
-        console.log('[AI Panel] Kimi: Found send button with selector:', selector);
         return btn;
       }
     }
@@ -351,14 +325,11 @@
       const text = btn.textContent?.toLowerCase() || '';
       const className = btn.className?.toLowerCase() || '';
 
-      console.log('[AI Panel] Kimi: Checking button - text:', text, 'class:', className);
-
       if (text.includes('send') || text.includes('发送') ||
           text.includes('提交') || text === '' ||
           className.includes('send') || className.includes('submit') ||
           className.includes('icon') || className.includes('button')) {
         if (isVisible(btn)) {
-          console.log('[AI Panel] Kimi: Found potential send button:', className);
           return btn;
         }
       }
@@ -496,8 +467,6 @@
   }
 
   async function simulateTyping(element, text) {
-    console.log('[AI Panel] Kimi: Simulating typing for text:', text);
-
     // Focus the element
     element.focus();
     await sleep(50);
@@ -540,7 +509,5 @@
     // Dispatch input event after typing
     element.dispatchEvent(new Event('input', { bubbles: true }));
     element.dispatchEvent(new Event('change', { bubbles: true }));
-
-    console.log('[AI Panel] Kimi: Typing simulation complete, content:', element.innerHTML);
   }
 })();

@@ -89,17 +89,11 @@
       ];
 
       let inputEl = null;
-      let foundSelector = null;
-
-      console.log('[AI Panel] Qwen: Searching for input box...');
 
       for (const selector of inputSelectors) {
         const el = document.querySelector(selector);
-        console.log(`[AI Panel] Qwen: Testing selector "${selector}":`, el ? 'Found' : 'Not found');
         if (el && isVisible(el)) {
           inputEl = el;
-          foundSelector = selector;
-          console.log('[AI Panel] Qwen: Input box found with selector:', foundSelector);
           break;
         }
       }
@@ -206,18 +200,13 @@
       'button:has(svg)'
     ];
 
-    console.log('[AI Panel] Qwen: Searching for send button...');
-
     for (const selector of selectors) {
       const btn = document.querySelector(selector);
-      console.log(`[AI Panel] Qwen: Testing selector "${selector}":`, btn ? 'Found' : 'Not found');
       if (btn && isVisible(btn)) {
-        console.log('[AI Panel] Qwen: Found send button with selector:', selector);
         // If it's use or svg element, return its container
         if (btn.tagName === 'USE' || btn.tagName === 'svg' || btn.tagName === 'SPAN') {
           const container = btn.closest('.operateBtn-JsB9e2') || btn.closest('div[class*="operateBtn"]') || btn.parentElement;
           if (container) {
-            console.log('[AI Panel] Qwen: Using container instead of SVG element');
             return container;
           }
         }
@@ -228,26 +217,20 @@
     // Fallback: try to find any button that looks like a send button
     const buttons = Array.from(document.querySelectorAll('button, div[class*="operateBtn"], span[data-icon-type], svg, use'));
 
-    console.log(`[AI Panel] Qwen: Found ${buttons.length} potential button elements`);
-
     for (const btn of buttons) {
       const text = btn.textContent?.toLowerCase() || '';
       const className = btn.className?.toLowerCase() || '';
       const dataset = btn.dataset || {};
-
-      console.log('[AI Panel] Qwen: Checking button - text:', text, 'class:', className, 'data-icon-type:', dataset.iconType);
 
       if (text.includes('send') || text.includes('发送') ||
           text.includes('提交') || text === '' ||
           className.includes('operatebtn') || className.includes('send') ||
           className.includes('submit') || dataset?.iconType?.includes('sendChat')) {
         if (isVisible(btn)) {
-          console.log('[AI Panel] Qwen: Found potential send button:', className);
           // If it's SVG/USE/SPAN, return container
           if (btn.tagName === 'USE' || btn.tagName === 'svg' || btn.tagName === 'SPAN') {
             const container = btn.closest('div[class*="operateBtn"]') || btn.parentElement;
             if (container) {
-              console.log('[AI Panel] Qwen: Using container');
               return container;
             }
           }

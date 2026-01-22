@@ -153,17 +153,12 @@
   }
 
   async function clickSendButton(button) {
-    console.log('[AI Panel] ChatGLM: Attempting to click send button');
-    console.log('[AI Panel] ChatGLM: Button element:', button.tagName, button.className);
-
     // Try multiple methods to click the button
     try {
       // If it's an SVG element, click its parent container
       if (button.tagName === 'svg' || button.tagName === 'path') {
-        console.log('[AI Panel] ChatGLM: Found SVG element, clicking parent container');
         const container = button.closest('[class*="button"]') || button.closest('button') || button.parentElement;
         if (container) {
-          console.log('[AI Panel] ChatGLM: Clicking container:', container.className);
 
           // Method 1: Click container
           container.click();
@@ -207,13 +202,11 @@
             button: 0
           }));
 
-          console.log('[AI Panel] ChatGLM: Container click methods executed');
           return;
         }
       }
 
       // Standard button click
-      console.log('[AI Panel] ChatGLM: Trying standard click methods');
 
       // Method 1: Standard click
       button.click();
@@ -256,8 +249,6 @@
       button.dispatchEvent(mouseUp);
       await sleep(50);
       button.dispatchEvent(clickEvent);
-
-      console.log('[AI Panel] ChatGLM: All click methods executed');
     } catch (err) {
       console.error('[AI Panel] ChatGLM: Click error:', err);
       // Highlight button if click fails
@@ -290,18 +281,13 @@
       'svg[class*="send"]'
     ];
 
-    console.log('[AI Panel] ChatGLM: Searching for send button...');
-
     for (const selector of selectors) {
       const btn = document.querySelector(selector);
-      console.log(`[AI Panel] ChatGLM: Testing selector "${selector}":`, btn ? 'Found' : 'Not found');
       if (btn && isVisible(btn)) {
-        console.log('[AI Panel] ChatGLM: Found send button with selector:', selector);
         // If it's the img element, return its container
         if (btn.tagName === 'IMG') {
           const container = btn.closest('.enter-icon-container');
           if (container) {
-            console.log('[AI Panel] ChatGLM: Using container instead of img');
             return container;
           }
         }
@@ -312,20 +298,15 @@
     // Fallback: try to find any button that looks like a send button
     const buttons = Array.from(document.querySelectorAll('button, div[class*="icon"], img[src*="send"]'));
 
-    console.log(`[AI Panel] ChatGLM: Found ${buttons.length} potential button elements`);
-
     for (const btn of buttons) {
       const text = btn.textContent?.toLowerCase() || '';
       const className = btn.className?.toLowerCase() || '';
-
-      console.log('[AI Panel] ChatGLM: Checking button - text:', text, 'class:', className);
 
       if (text.includes('send') || text.includes('发送') ||
           text.includes('提交') || text === '新对话' ||
           className.includes('enter-icon') || className.includes('send') ||
           className.includes('submit') || (btn.tagName === 'IMG' && btn.src?.includes('send'))) {
         if (isVisible(btn)) {
-          console.log('[AI Panel] ChatGLM: Found potential send button:', className);
           // If it's img, return container
           if (btn.tagName === 'IMG') {
             const container = btn.closest('.enter-icon-container');
