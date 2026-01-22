@@ -78,6 +78,7 @@
         'div.chat-input-editor[contenteditable="true"]',  // Kimi specific
         'div[contenteditable="true"][data-lexical-editor="true"]',  // Lexical editor
         'div[role="textbox"][contenteditable="true"]',  // Generic textbox
+        'div[class*="chat-input-editor"][contenteditable="true"]',  // Partial class match
         'div[contenteditable="true"].chat-input-editor',  // Alternative format
         'textarea[placeholder*="输入"]',
         'textarea[placeholder*="message"]',
@@ -86,9 +87,17 @@
       ];
 
       let inputEl = null;
+      let foundSelector = null;
+
+      console.log('[AI Panel] Kimi: Searching for input box...');
+
       for (const selector of inputSelectors) {
-        inputEl = document.querySelector(selector);
-        if (inputEl && isVisible(inputEl)) {
+        const el = document.querySelector(selector);
+        console.log(`[AI Panel] Kimi: Testing selector "${selector}":`, el ? 'Found' : 'Not found');
+        if (el && isVisible(el)) {
+          inputEl = el;
+          foundSelector = selector;
+          console.log('[AI Panel] Kimi: Input box found with selector:', foundSelector);
           break;
         }
       }
@@ -99,11 +108,13 @@
 
       // Focus the input
       inputEl.focus();
+      console.log('[AI Panel] Kimi: Input focused');
 
       // Handle different input types
       if (inputEl.tagName === 'TEXTAREA') {
         // For textarea, use value setter
         inputEl.value = text;
+        console.log('[AI Panel] Kimi: Text set for textarea');
 
         // Trigger React/Vue change events
         const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
@@ -121,10 +132,24 @@
         inputEl.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true }));
       } else {
         // Contenteditable div
+        console.log('[AI Panel] Kimi: Setting text for contenteditable div');
+        console.log('[AI Panel] Kimi: Current content:', inputEl.innerHTML);
+        console.log('[AI Panel] Kimi: Text to set:', text);
+
+        // Clear existing content
+        inputEl.innerHTML = '';
+
+        // Set new text
         inputEl.textContent = text;
-        inputEl.innerText = text;
+        console.log('[AI Panel] Kimi: Text content set to:', inputEl.textContent);
+
+        // Trigger various events
         inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+        inputEl.dispatchEvent(new Event('change', { bubbles: true }));
         inputEl.dispatchEvent(new Event('keyup', { bubbles: true }));
+        inputEl.dispatchEvent(new Event('paste', { bubbles: true }));
+
+        console.log('[AI Panel] Kimi: Events dispatched, new content:', inputEl.innerHTML);
       }
 
       // Small delay to let the UI process
